@@ -7,7 +7,7 @@ class VRChat {
     async getToken(username, password) {
         try {
             if (!username || !password) {
-                throw new TypeError('Username or Password cannot be invalid');
+                throw new TypeError('Username or Password must be provided');
             }
             const dataBuffer = Buffer.from(`${username}:${password}`);
             const authorization = dataBuffer.toString('base64');
@@ -19,6 +19,28 @@ class VRChat {
             const data = await response.json();
             if (response.status === 200) {
                 return authorization;
+            }
+            else {
+                throw new error_handling_1.AuthError(response.status, data);
+            }
+        }
+        catch (err) {
+            console.error(err);
+            return err;
+        }
+    }
+    async getUserDetails(token) {
+        try {
+            if (!token)
+                throw new TypeError('Token must be provided');
+            const response = await node_fetch_1.default('https://api.vrchat.cloud/api/1/auth/user', {
+                headers: {
+                    Authorization: `Basic ${token}`
+                }
+            });
+            const data = await response.json();
+            if (response.status === 200) {
+                return data;
             }
             else {
                 throw new error_handling_1.AuthError(response.status, data);

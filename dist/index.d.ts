@@ -1,3 +1,4 @@
 export declare class VRChat {
-    getToken(username: String, password: String): Promise<any>;
+    getToken(username: string, password: string): Promise<any>;
+    getUserDetails(token: string): Promise<any>;
 }

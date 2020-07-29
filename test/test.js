@@ -20,6 +20,13 @@ describe('VRChat Library', () => {
   })
 
   describe('/GET Authorization', () => {
+    it('should throw a TypeError', async () => {
+      try {
+        await vrchat.getToken()
+      } catch (err) {
+        expect(err instanceof TypeError).to.be.true
+      }
+    })
     it('should throw an AuthError', async () => {
       try {
           await vrchat.getToken('hello', 'world')
@@ -39,5 +46,24 @@ describe('VRChat Library', () => {
     })
   })
 
+  describe('/GET User Details', () => {
+    it('should throw a TypeError', async () => {
+      try {
+        await vrchat.getUserDetails()
+      } catch (err) {
+        expect(err instanceof TypeError).to.be.true
+      }
+    })
+    it('should return user details', async () => {
+      try {
+        console.log(authToken)
+        const userDetails = await vrchat.getUserDetails(authToken)
+        console.log(userDetails)
+        expect(userDetails).to.be.a('object')
+      } catch (err) {
+        expect.fail("Error" + JSON.stringify(err))
+      }
+    })
+  })
 
 })
