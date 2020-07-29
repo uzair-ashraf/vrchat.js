@@ -1,16 +1,16 @@
+require('dotenv').config()
 const chai = require('chai')
-const chaiHttp = require('chai-http')
-const VRChat = require('../dist/index')
-
-chai.use(chaiHttp)
+const { AuthError } = require('../dist/error-handling')
+const { VRChat } = require('../dist/index')
 
 const { expect } = chai
 
 let vrchat = null
+let authToken = null
 
 describe('VRChat Library', () => {
 
-  describe('Library instantion', () => {
+  describe('Library instantiation', () => {
     it('should return an instance of VRChat', done => {
       vrchat = new VRChat()
       expect(vrchat).to.be.an('object')
@@ -18,5 +18,26 @@ describe('VRChat Library', () => {
       done()
     })
   })
+
+  describe('/GET Authorization', () => {
+    it('should throw an AuthError', async () => {
+      try {
+          await vrchat.getToken('hello', 'world')
+      } catch (err) {
+          expect(err instanceof AuthError).to.be.true
+          expect(err.status === 401).to.be.true
+      }
+    })
+    it('should return an auth token', async () => {
+      try {
+          authToken = await vrchat.getToken(process.env.USERNAME, process.env.PASSWORD)
+          expect(authToken).to.be.a('string')
+          expect(/^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/.test(authToken)).to.be.true
+      } catch(err) {
+          expect.fail("Error" + JSON.stringify(err))
+      }
+    })
+  })
+
 
 })
