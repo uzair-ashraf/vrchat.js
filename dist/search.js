@@ -4,11 +4,16 @@ exports.Search = void 0;
 const node_fetch_1 = require("node-fetch");
 const error_handling_1 = require("./error-handling");
 class Search {
-    async users(apiKey, username) {
+    async users(token, apiKey, username, maxResults = 10) {
         try {
-            if (!apiKey)
-                throw new TypeError('apiKey must be provided');
-            const response = await node_fetch_1.default(`https://api.vrchat.cloud/api/1/auth/user/friends?apiKey=${apiKey}${username ? `&search=${username}` : ''}`);
+            if (!token || !apiKey || !username)
+                throw new TypeError('token and apiKey must be provided');
+            const url = `https://api.vrchat.cloud/api/1/users?apiKey=${apiKey}&search=${username}&n=${maxResults}`;
+            const response = await node_fetch_1.default(url, {
+                headers: {
+                    Authorization: `Basic ${token}`
+                }
+            });
             const data = await response.json();
             if (response.status === 200) {
                 return data;

@@ -8,7 +8,7 @@ const { expect } = chai
 
 // Hides console logs to clean tests
 // Comment out two lines below to see logs/errors to the console
-sinon.stub(console, 'log')
+// sinon.stub(console, 'log')
 sinon.stub(console, 'error')
 
 let vrchat = null
@@ -73,7 +73,7 @@ describe('VRChat Library', () => {
         expect.fail("Error" + JSON.stringify(err))
       }
     })
-  })
+  }).timeout(5000)
 
   describe('/GET User Details', () => {
     it('should throw a TypeError', async () => {
@@ -108,6 +108,34 @@ describe('VRChat Library', () => {
       try {
         const friendsList = await vrchat.user.getFriendsList(authToken, apiKey)
         expect(friendsList).to.be.an('array')
+      } catch (err) {
+        expect.fail("Error" + JSON.stringify(err))
+      }
+    })
+  })
+
+  describe('/GET Search for user', () => {
+    it('should throw a TypeError', async () => {
+      try {
+        await vrchat.search.users()
+      } catch (err) {
+        expect(err instanceof TypeError).to.be.true
+      }
+    })
+    it('should return a list of 10 users', async () => {
+      try {
+        const users = await vrchat.search.users(authToken, apiKey, 'shadow')
+        expect(users).to.be.an('array')
+        expect(users.length).to.equal(10)
+      } catch (err) {
+        expect.fail("Error" + JSON.stringify(err))
+      }
+    })
+    it('should return a list of 100 users', async () => {
+      try {
+        const users = await vrchat.search.users(authToken, apiKey, 'shadow', 100)
+        expect(users).to.be.an('array')
+        expect(users.length).to.equal(100)
       } catch (err) {
         expect.fail("Error" + JSON.stringify(err))
       }

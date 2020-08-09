@@ -2,10 +2,15 @@ import fetch from 'node-fetch'
 import { AuthError } from './error-handling'
 
 export class Search {
-  public async users(apiKey: string, username: string): Promise<any> {
+  public async users(token: string, apiKey: string, username: string, maxResults: number = 10): Promise<any> {
     try {
-      if (!apiKey) throw new TypeError('apiKey must be provided')
-      const response: any = await fetch(`https://api.vrchat.cloud/api/1/auth/user/friends?apiKey=${apiKey}${username ? `&search=${username}` : ''}`)
+      if (!token || !apiKey || !username) throw new TypeError('token and apiKey must be provided')
+      const url: string = `https://api.vrchat.cloud/api/1/users?apiKey=${apiKey}&search=${username}&n=${maxResults}`
+      const response: any = await fetch(url, {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
+      })
       const data: object = await response.json()
       if (response.status === 200) {
         return data
