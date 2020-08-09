@@ -68,7 +68,6 @@ describe('VRChat Library', () => {
     it('should generate an api key', async () => {
       try {
         apiKey = await vrchat.generateApiKey(authToken)
-        console.log(apiKey)
         expect(apiKey).to.be.a('string')
       } catch (err) {
         expect.fail("Error" + JSON.stringify(err))
@@ -79,14 +78,14 @@ describe('VRChat Library', () => {
   describe('/GET User Details', () => {
     it('should throw a TypeError', async () => {
       try {
-        await vrchat.getUserDetails()
+        await vrchat.user.getUserDetails()
       } catch (err) {
         expect(err instanceof TypeError).to.be.true
       }
     })
     it('should return user details', async () => {
       try {
-        const userDetails = await vrchat.getUserDetails(authToken)
+        const userDetails = await vrchat.user.getDetails(authToken)
         expect(userDetails).to.be.a('object')
         expect(userDetails).to.have.property('username')
         expect(userDetails).to.have.property('friends')
@@ -100,14 +99,14 @@ describe('VRChat Library', () => {
   describe('/GET Friends List', () => {
     it('should throw a TypeError', async () => {
       try {
-        await vrchat.getFriendsList()
+        await vrchat.user.getFriendsList()
       } catch (err) {
         expect(err instanceof TypeError).to.be.true
       }
     })
     it('should return friends list', async () => {
       try {
-        const friendsList = await vrchat.getFriendsList(authToken, apiKey)
+        const friendsList = await vrchat.user.getFriendsList(authToken, apiKey)
         expect(friendsList).to.be.an('array')
       } catch (err) {
         expect.fail("Error" + JSON.stringify(err))
