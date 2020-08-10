@@ -1,6 +1,6 @@
 require('dotenv').config()
 const chai = require('chai')
-const { AuthError } = require('../dist/error-handling')
+const { AuthError, BadRequest } = require('../dist/error-handling')
 const { VRChat } = require('../dist/index')
 const sinon = require('sinon')
 
@@ -114,7 +114,7 @@ describe('VRChat Library', () => {
     })
   })
 
-  describe('/GET Search for user', () => {
+  describe('/GET Search for multiple users', () => {
     it('should throw a TypeError', async () => {
       try {
         await vrchat.search.users()
@@ -136,6 +136,35 @@ describe('VRChat Library', () => {
         const users = await vrchat.search.users(authToken, apiKey, 'shadow', 100)
         expect(users).to.be.an('array')
         expect(users.length).to.equal(100)
+      } catch (err) {
+        expect.fail("Error" + JSON.stringify(err))
+      }
+    })
+  })
+
+  // username is not the display name, but the actual username
+  describe('/GET Search for specific user by name', () => {
+    it('should throw a TypeError', async () => {
+      try {
+        await vrchat.search.userByName()
+      } catch (err) {
+        expect(err instanceof TypeError).to.be.true
+      }
+    })
+    it('should throw a BadRequest Error for user not found', async () => {
+      try {
+        const user = await vrchat.search.userByName(authToken, apiKey, '3510674287')
+      } catch (err) {
+        expect(err instanceof BadRequest).to.be.true
+      }
+    })
+    it('should return a user object', async () => {
+      try {
+        const user = await vrchat.search.userByName(authToken, apiKey, 'shadowroxas')
+        expect(user).to.be.a('object')
+        expect(user).to.have.property('username')
+        expect(user).to.have.property('displayName')
+        expect(user).to.have.property('isFriend')
       } catch (err) {
         expect.fail("Error" + JSON.stringify(err))
       }
