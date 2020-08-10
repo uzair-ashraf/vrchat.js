@@ -56,5 +56,33 @@ class Search {
             return err;
         }
     }
+    async userById(token, apiKey, id) {
+        try {
+            if (!token || !apiKey || !id)
+                throw new TypeError('token, apiKey, and id must be provided');
+            const url = `https://api.vrchat.cloud/api/1/users/${id}?apiKey=${apiKey}`;
+            const response = await node_fetch_1.default(url, {
+                headers: {
+                    Authorization: `Basic ${token}`
+                }
+            });
+            const data = await response.json();
+            switch (response.status) {
+                case 200:
+                    return data;
+                    break;
+                case 404:
+                    throw new error_handling_1.BadRequest(response.status, data);
+                    break;
+                default:
+                    throw new error_handling_1.AuthError(response.status, data);
+                    break;
+            }
+        }
+        catch (err) {
+            console.error(err);
+            return err;
+        }
+    }
 }
 exports.Search = Search;
