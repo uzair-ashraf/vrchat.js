@@ -1,3 +1,8 @@
+import { WorldEndPoints } from './interfaces';
 export declare class World {
-    getWorldsList(token: string, apiKey: string, username: string, maxResults?: number): Promise<any>;
+    private readonly endpoints;
+    private readonly sortOptions;
+    private readonly orderOptions;
+    constructor();
+    getWorldsList(token: string, apiKey: string, worldType?: keyof WorldEndPoints, maxResults?: number, sortBy?: string, orderBy?: string, isOwn?: boolean): Promise<any>;
 }

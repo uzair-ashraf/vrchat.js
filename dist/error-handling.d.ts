@@ -8,3 +8,8 @@ export declare class BadRequest extends Error {
     response: object;
     constructor(status: number, response: object);
 }
+export declare class UnexpectedError extends Error {
+    status: number;
+    response: object;
+    constructor(status: number, response: object);
+}

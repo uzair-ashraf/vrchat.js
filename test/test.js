@@ -202,4 +202,38 @@ describe('VRChat Library', () => {
     })
   })
 
+  describe('/GET World getWorldsList', () => {
+    it('should throw a TypeError', async () => {
+      try {
+        await vrchat.world.getWorldsList()
+      } catch (err) {
+        expect(err instanceof TypeError).to.be.true
+      }
+    })
+    it('should throw a Error for wrong world type', async () => {
+      try {
+        await vrchat.world.getWorldsList(authToken, apiKey, 'meow')
+      } catch (err) {
+        expect(err instanceof Error).to.be.true
+        expect(err.message).to.equal('Please provide a valid world type')
+      }
+    })
+    it('should throw a Error for wrong sort type', async () => {
+      try {
+        await vrchat.world.getWorldsList(authToken, apiKey, 'any', 100, 'meow')
+      } catch (err) {
+        expect(err instanceof Error).to.be.true
+        expect(err.message).to.equal('Please supply a valid sorting option')
+      }
+    })
+    it('should throw a Error for wrong order type', async () => {
+      try {
+        await vrchat.world.getWorldsList(authToken, apiKey, 'any', 100, 'popularity', 'meow')
+      } catch (err) {
+        expect(err instanceof Error).to.be.true
+        expect(err.message).to.equal('Please supply a valid ordering option')
+      }
+    })
+  })
+
 })
