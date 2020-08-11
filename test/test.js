@@ -171,7 +171,7 @@ describe('VRChat Library', () => {
       } catch (err) {
         expect.fail("Error" + JSON.stringify(err))
       }
-    })
+    }).timeout(5000)
   })
 
   describe('/GET User getUserById', () => {
@@ -199,7 +199,7 @@ describe('VRChat Library', () => {
       } catch (err) {
         expect.fail("Error" + JSON.stringify(err))
       }
-    })
+    }).timeout(5000)
   })
 
   describe('/GET World getWorldsList', () => {
@@ -232,6 +232,25 @@ describe('VRChat Library', () => {
       } catch (err) {
         expect(err instanceof Error).to.be.true
         expect(err.message).to.equal('Please supply a valid ordering option')
+      }
+    })
+    it('should return an array of 10 worlds', async () => {
+      try {
+        const worlds = await vrchat.world.getWorldsList(authToken, apiKey)
+        expect(worlds).to.be.a('array')
+        expect(worlds.length).to.be.equal(10)
+      } catch (err) {
+        expect.fail("Error" + JSON.stringify(err))
+      }
+    })
+    it('should return an array of 100 worlds', async () => {
+      try {
+        const worlds = await vrchat.world.getWorldsList(authToken, apiKey, 'any', 100)
+        expect(worlds).to.be.a('array')
+        expect(worlds.length).to.be.equal(100)
+        console.log(worlds)
+      } catch (err) {
+        expect.fail("Error" + JSON.stringify(err))
       }
     })
   })
