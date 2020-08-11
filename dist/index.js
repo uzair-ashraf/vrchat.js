@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.VRChat = void 0;
 const node_fetch_1 = require("node-fetch");
 const error_handling_1 = require("./error-handling");
-const search_1 = require("./search");
+const world_1 = require("./world");
 const user_1 = require("./user");
 class VRChat {
     constructor() {
-        this.search = new search_1.Search();
+        this.world = new world_1.World();
         this.user = new user_1.User();
     }
     async getToken(username, password) {

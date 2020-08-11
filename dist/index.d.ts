@@ -1,7 +1,7 @@
-import { Search } from './search';
+import { World } from './world';
 import { User } from './user';
 export declare class VRChat {
-    search: Search;
+    world: World;
     user: User;
     constructor();
     getToken(username: string, password: string): Promise<any>;

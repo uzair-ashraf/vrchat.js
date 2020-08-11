@@ -76,17 +76,17 @@ describe('VRChat Library', () => {
     })
   }).timeout(5000)
 
-  describe('/GET User Details', () => {
+  describe('/GET User getInfo', () => {
     it('should throw a TypeError', async () => {
       try {
-        await vrchat.user.getDetails()
+        await vrchat.user.getInfo()
       } catch (err) {
         expect(err instanceof TypeError).to.be.true
       }
     })
     it('should return user details', async () => {
       try {
-        const userDetails = await vrchat.user.getDetails(authToken)
+        const userDetails = await vrchat.user.getInfo(authToken)
         expect(userDetails).to.be.a('object')
         expect(userDetails).to.have.property('username')
         expect(userDetails).to.have.property('friends')
@@ -97,7 +97,7 @@ describe('VRChat Library', () => {
     })
   })
 
-  describe('/GET Friends List', () => {
+  describe('/GET User getFriendsList', () => {
     it('should throw a TypeError', async () => {
       try {
         await vrchat.user.getFriendsList()
@@ -115,17 +115,17 @@ describe('VRChat Library', () => {
     })
   })
 
-  describe('/GET Search for multiple users', () => {
+  describe('/GET User getUsersList', () => {
     it('should throw a TypeError', async () => {
       try {
-        await vrchat.search.users()
+        await vrchat.user.getUsersList()
       } catch (err) {
         expect(err instanceof TypeError).to.be.true
       }
     })
     it('should return a list of 10 users', async () => {
       try {
-        const users = await vrchat.search.users(authToken, apiKey, 'shadow')
+        const users = await vrchat.user.getUsersList(authToken, apiKey, 'shadow')
         expect(users).to.be.an('array')
         expect(users.length).to.equal(10)
       } catch (err) {
@@ -134,7 +134,7 @@ describe('VRChat Library', () => {
     })
     it('should return a list of 100 users', async () => {
       try {
-        const users = await vrchat.search.users(authToken, apiKey, 'shadow', 100)
+        const users = await vrchat.user.getUsersList(authToken, apiKey, 'shadow', 100)
         expect(users).to.be.an('array')
         expect(users.length).to.equal(100)
       } catch (err) {
@@ -144,24 +144,24 @@ describe('VRChat Library', () => {
   })
 
   // username is not the display name, but the actual username
-  describe('/GET Search for specific user by name', () => {
+  describe('/GET User getUserByName', () => {
     it('should throw a TypeError', async () => {
       try {
-        await vrchat.search.userByName()
+        await vrchat.user.getUserByName()
       } catch (err) {
         expect(err instanceof TypeError).to.be.true
       }
     })
     it('should throw a BadRequest Error for user not found', async () => {
       try {
-        const user = await vrchat.search.userByName(authToken, apiKey, '3510674287')
+        const user = await vrchat.user.getUserByName(authToken, apiKey, '3510674287')
       } catch (err) {
         expect(err instanceof BadRequest).to.be.true
       }
     })
     it('should return a user object', async () => {
       try {
-        const user = await vrchat.search.userByName(authToken, apiKey, 'shadowroxas')
+        const user = await vrchat.user.getUserByName(authToken, apiKey, 'shadowroxas')
         expect(user).to.be.a('object')
         expect(user).to.have.property('username')
         expect(user).to.have.property('id')
@@ -174,24 +174,24 @@ describe('VRChat Library', () => {
     })
   })
 
-  describe('/GET Search for specific user by id', () => {
+  describe('/GET User getUserById', () => {
     it('should throw a TypeError', async () => {
       try {
-        await vrchat.search.userById()
+        await vrchat.user.getUserById()
       } catch (err) {
         expect(err instanceof TypeError).to.be.true
       }
     })
     it('should throw a BadRequest Error for user not found', async () => {
       try {
-        const user = await vrchat.search.userById(authToken, apiKey, '3510674287')
+        const user = await vrchat.user.getUserById(authToken, apiKey, '3510674287')
       } catch (err) {
         expect(err instanceof BadRequest).to.be.true
       }
     })
     it('should return a user object', async () => {
       try {
-        const user = await vrchat.search.userById(authToken, apiKey, testUserId)
+        const user = await vrchat.user.getUserById(authToken, apiKey, testUserId)
         expect(user).to.be.a('object')
         expect(user).to.have.property('username')
         expect(user).to.have.property('displayName')

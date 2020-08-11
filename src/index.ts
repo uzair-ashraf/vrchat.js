@@ -1,13 +1,13 @@
 import fetch from 'node-fetch'
 import { AuthError } from './error-handling'
-import { Search } from './search'
+import { World } from './world'
 import { User } from './user'
 
 export class VRChat {
-  search: Search;
+  world: World;
   user: User;
   constructor() {
-    this.search = new Search()
+    this.world = new World()
     this.user = new User()
   }
   public async getToken(username: string, password: string): Promise<any> {
