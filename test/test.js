@@ -16,6 +16,11 @@ let authToken = null
 let apiKey = null
 let testUserId = null
 
+
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////Testing VRChat Class///////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 describe('VRChat Library', () => {
 
   describe('Library instantiation', () => {
@@ -28,6 +33,10 @@ describe('VRChat Library', () => {
     })
 
   })
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////Testing System Api/////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
   describe('/GET Authorization', () => {
 
     it('should throw a TypeError', async () => {
@@ -75,6 +84,11 @@ describe('VRChat Library', () => {
       }
     })
   }).timeout(5000)
+
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////Testing User Api///////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 
   describe('/GET User getInfo', () => {
     it('should throw a TypeError', async () => {
@@ -202,6 +216,11 @@ describe('VRChat Library', () => {
     }).timeout(5000)
   })
 
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////Testing World Api//////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
   describe('/GET World getWorldsList', () => {
     it('should throw a TypeError', async () => {
       try {
@@ -248,7 +267,15 @@ describe('VRChat Library', () => {
         const worlds = await vrchat.world.getWorldsList(authToken, apiKey, 'any', 100)
         expect(worlds).to.be.a('array')
         expect(worlds.length).to.be.equal(100)
-        console.log(worlds)
+      } catch (err) {
+        expect.fail("Error" + JSON.stringify(err))
+      }
+    })
+    it('should return the users own worlds or an empty array', async () => {
+      try {
+        const worlds = await vrchat.world.getWorldsList(authToken, apiKey, 'any', undefined, undefined, undefined, true)
+        expect(worlds).to.be.a('array')
+        expect(worlds.length === 0 || worlds[0].authorId === testUserId).to.be.true
       } catch (err) {
         expect.fail("Error" + JSON.stringify(err))
       }

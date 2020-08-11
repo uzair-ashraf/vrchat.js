@@ -4,8 +4,8 @@ import { World } from './world'
 import { User } from './user'
 
 export class VRChat {
-  world: World;
-  user: User;
+  public world: World;
+  public user: User;
   constructor() {
     this.world = new World()
     this.user = new User()
