@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 import { AuthError, BadRequest, UnexpectedError } from './error-handling'
-import { UserEndpoints, UserOptions } from './interfaces'
-
+import { UserEndpoints, UserOptions, FriendsListOptions } from './interfaces'
+import { RequestFormatter } from './request-formatter'
 export class User {
   private readonly userEndpoints: UserEndpoints;
   constructor() {
@@ -29,10 +29,19 @@ export class User {
       return err
     }
   }
-  public async getFriendsList(token: string, apiKey: string): Promise<any> {
+  public async getFriendsList(
+    token: string,
+    apiKey: string,
+    config: FriendsListOptions
+  ): Promise<any> {
     try {
       if (!token || !apiKey) throw new TypeError('Token and apiKey must be provided')
-      const response: any = await fetch(`https://api.vrchat.cloud/api/1/auth/user/friends?apiKey=${apiKey}`, {
+      let url = `https://api.vrchat.cloud/api/1/auth/user/friends?apiKey=${apiKey}`
+      // if a config object is passed, format query
+      if(config) {
+        url = RequestFormatter.formatQuery(url, config)
+      }
+      const response: any = await fetch(url, {
         headers: {
           Authorization: `Basic ${token}`
         }
@@ -65,9 +74,7 @@ export class User {
       if(!config.search) throw new Error('Please provide a valid search parameter')
       url = `${url}?apiKey=${apiKey}`
       // Format query parameters
-      for (const queryParam in config) {
-        url += `&${queryParam}=${config[queryParam as keyof UserOptions]}`
-      }
+      url = RequestFormatter.formatQuery(url, config)
       const response: any = await fetch(url, {
         headers: {
           Authorization: `Basic ${token}`

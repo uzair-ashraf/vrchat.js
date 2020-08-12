@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
 import { AuthError, BadRequest, UnexpectedError } from './error-handling'
 import { WorldEndPoints, WorldOptions } from './interfaces'
+import { RequestFormatter } from './request-formatter'
 
 export class World {
   private readonly endpoints: WorldEndPoints;
@@ -58,9 +59,7 @@ export class World {
       }
       url = `${url}?apiKey=${apiKey}`
       // Format query parameters
-      for(const queryParam in config) {
-        url+= `&${queryParam}=${config[queryParam as keyof WorldOptions]}`
-      }
+      url = RequestFormatter.formatQuery(url, config)
       const response: any = await fetch(url, {
         headers: {
           Authorization: `Basic ${token}`

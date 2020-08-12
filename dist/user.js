@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const node_fetch_1 = require("node-fetch");
 const error_handling_1 = require("./error-handling");
+const request_formatter_1 = require("./request-formatter");
 class User {
     constructor() {
         this.userEndpoints = {
@@ -32,11 +33,16 @@ class User {
             return err;
         }
     }
-    async getFriendsList(token, apiKey) {
+    async getFriendsList(token, apiKey, config) {
         try {
             if (!token || !apiKey)
                 throw new TypeError('Token and apiKey must be provided');
-            const response = await node_fetch_1.default(`https://api.vrchat.cloud/api/1/auth/user/friends?apiKey=${apiKey}`, {
+            let url = `https://api.vrchat.cloud/api/1/auth/user/friends?apiKey=${apiKey}`;
+            // if a config object is passed, format query
+            if (config) {
+                url = request_formatter_1.RequestFormatter.formatQuery(url, config);
+            }
+            const response = await node_fetch_1.default(url, {
                 headers: {
                     Authorization: `Basic ${token}`
                 }
@@ -69,9 +75,7 @@ class User {
                 throw new Error('Please provide a valid search parameter');
             url = `${url}?apiKey=${apiKey}`;
             // Format query parameters
-            for (const queryParam in config) {
-                url += `&${queryParam}=${config[queryParam]}`;
-            }
+            url = request_formatter_1.RequestFormatter.formatQuery(url, config);
             const response = await node_fetch_1.default(url, {
                 headers: {
                     Authorization: `Basic ${token}`

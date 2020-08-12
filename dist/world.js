@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.World = void 0;
 const node_fetch_1 = require("node-fetch");
 const error_handling_1 = require("./error-handling");
+const request_formatter_1 = require("./request-formatter");
 class World {
     constructor() {
         this.endpoints = {
@@ -54,9 +55,7 @@ class World {
             }
             url = `${url}?apiKey=${apiKey}`;
             // Format query parameters
-            for (const queryParam in config) {
-                url += `&${queryParam}=${config[queryParam]}`;
-            }
+            url = request_formatter_1.RequestFormatter.formatQuery(url, config);
             const response = await node_fetch_1.default(url, {
                 headers: {
                     Authorization: `Basic ${token}`

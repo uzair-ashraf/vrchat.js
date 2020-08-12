@@ -24,3 +24,8 @@ export interface UserOptions {
     n?: number;
     offset?: number;
 }
+export interface FriendsListOptions {
+    offset?: number;
+    n?: number;
+    offline?: boolean;
+}

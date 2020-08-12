@@ -128,6 +128,17 @@ describe('VRChat Library', () => {
         expect.fail("Error" + JSON.stringify(err))
       }
     })
+    it('should return friends list of 10 people max', async () => {
+      try {
+        const friendsList = await vrchat.user.getFriendsList(authToken, apiKey, {
+          n: 10
+        })
+        expect(friendsList).to.be.an('array')
+        expect(friendsList.length <= 10).to.be.true
+      } catch (err) {
+        expect.fail("Error" + JSON.stringify(err))
+      }
+    })
   })
 
   describe('/GET User getUsersList', () => {
