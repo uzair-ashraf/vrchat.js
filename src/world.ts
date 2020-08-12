@@ -65,4 +65,57 @@ export class World {
       return err
     }
   }
+
+  public async getWorldById(token: string, apiKey: string, id: string): Promise<any> {
+    try {
+      if (!token || !apiKey || !id) throw new TypeError('token, apiKey, and id must be provided')
+      const url: string = `https://api.vrchat.cloud/api/1/worlds/${id}?apiKey=${apiKey}`
+      const response: any = await fetch(url, {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
+      })
+      const data: object = await response.json()
+      switch (response.status) {
+        case 200:
+          return data;
+          break;
+        case 404:
+          throw new BadRequest(response.status, data)
+          break;
+        default:
+          throw new AuthError(response.status, data)
+          break;
+      }
+    } catch(err) {
+      console.error(err)
+      return err
+    }
+  }
+  public async getWorldMetaData(token: string, apiKey: string, id: string): Promise<any> {
+    try {
+      if (!token || !apiKey || !id) throw new TypeError('token, apiKey, and id must be provided')
+      const url: string = `https://api.vrchat.cloud/api/1/worlds/${id}/metadata?apiKey=${apiKey}`
+      const response: any = await fetch(url, {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
+      })
+      const data: object = await response.json()
+      switch (response.status) {
+        case 200:
+          return data;
+          break;
+        case 404:
+          throw new BadRequest(response.status, data)
+          break;
+        default:
+          throw new AuthError(response.status, data)
+          break;
+      }
+    } catch (err) {
+      console.error(err)
+      return err
+    }
+  }
 }

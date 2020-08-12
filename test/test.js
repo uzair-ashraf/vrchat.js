@@ -15,6 +15,7 @@ let vrchat = null
 let authToken = null
 let apiKey = null
 let testUserId = null
+let testWorldId = null
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -258,6 +259,7 @@ describe('VRChat Library', () => {
         const worlds = await vrchat.world.getWorldsList(authToken, apiKey)
         expect(worlds).to.be.a('array')
         expect(worlds.length).to.be.equal(10)
+        testWorldId = worlds[0].id
       } catch (err) {
         expect.fail("Error" + JSON.stringify(err))
       }
@@ -278,6 +280,67 @@ describe('VRChat Library', () => {
         expect(worlds.length === 0 || worlds[0].authorId === testUserId).to.be.true
       } catch (err) {
         expect.fail("Error" + JSON.stringify(err))
+      }
+    })
+  })
+
+  describe('/GET World getWorldById', () => {
+    it('should throw a TypeError', async () => {
+      try {
+        await vrchat.world.getWorldById()
+      } catch (err) {
+        expect(err instanceof TypeError).to.be.true
+      }
+    })
+    it('should throw a 404 Error for World not found', async () => {
+      try {
+        const world = await vrchat.world.getWorldById(authToken, apiKey, 'meow')
+      } catch (err) {
+        expect(err instanceof BadRequest).to.be.true
+        expect(err.status === 404).to.be.true
+      }
+    })
+    it('should return a world', async () => {
+      try {
+        const world = await vrchat.world.getWorldById(authToken, apiKey, testWorldId)
+        expect(world).to.be.a('object')
+        expect(world).to.have.property('id')
+        expect(world).to.have.property('name')
+        expect(world).to.have.property('description')
+        expect(world).to.have.property('featured')
+        expect(world.id === testWorldId).to.be.true
+      } catch (err) {
+        expect.fail("Error" + JSON.stringify(err))
+      }
+    })
+  })
+
+  describe('/GET World getWorldMetaData', () => {
+    it('should throw a TypeError', async () => {
+      try {
+        await vrchat.world.getWorldMetaData()
+      } catch (err) {
+        expect(err instanceof TypeError).to.be.true
+      }
+    })
+    it('should throw a 404 Error for World not found', async () => {
+      try {
+        await vrchat.world.getWorldMetaData(authToken, apiKey, 'meow')
+      } catch (err) {
+        expect(err instanceof BadRequest).to.be.true
+        expect(err.status === 404).to.be.true
+      }
+    })
+    it('should return world metadata', async () => {
+      try {
+        const worldMetaData = await vrchat.world.getWorldMetaData(authToken, apiKey, testWorldId)
+        expect(worldMetaData).to.have.property('id')
+        expect(worldMetaData).to.have.property('metadata')
+        expect(worldMetaData.id === testWorldId).to.be.true
+        expect(worldMetaData.metadata).to.be.a('object')
+      } catch (err) {
+        expect(err instanceof BadRequest).to.be.true
+        expect(err.status === 404).to.be.true
       }
     })
   })
