@@ -240,7 +240,9 @@ describe('VRChat Library', () => {
     })
     it('should throw a Error for wrong sort type', async () => {
       try {
-        await vrchat.world.getWorldsList(authToken, apiKey, 'any', 100, 'meow')
+        await vrchat.world.getWorldsList(authToken, apiKey, 'any', {
+          sort: 'meow'
+        })
       } catch (err) {
         expect(err instanceof Error).to.be.true
         expect(err.message).to.equal('Please supply a valid sorting option')
@@ -248,10 +250,25 @@ describe('VRChat Library', () => {
     })
     it('should throw a Error for wrong order type', async () => {
       try {
-        await vrchat.world.getWorldsList(authToken, apiKey, 'any', 100, 'popularity', 'meow')
+        await vrchat.world.getWorldsList(authToken, apiKey, 'any', {
+          sort: 'popularity',
+          order: 'meow'
+        })
       } catch (err) {
         expect(err instanceof Error).to.be.true
         expect(err.message).to.equal('Please supply a valid ordering option')
+      }
+    })
+    it('should throw a Error for wrong releaseStatus type', async () => {
+      try {
+        await vrchat.world.getWorldsList(authToken, apiKey, 'any', {
+          sort: 'popularity',
+          order: 'ascending',
+          releaseStatus: 'meow'
+        })
+      } catch (err) {
+        expect(err instanceof Error).to.be.true
+        expect(err.message).to.equal('Please supply a valid releaseStatus option')
       }
     })
     it('should return an array of 10 worlds', async () => {
@@ -266,7 +283,9 @@ describe('VRChat Library', () => {
     })
     it('should return an array of 100 worlds', async () => {
       try {
-        const worlds = await vrchat.world.getWorldsList(authToken, apiKey, 'any', 100)
+        const worlds = await vrchat.world.getWorldsList(authToken, apiKey, 'any', {
+          n: 100
+        })
         expect(worlds).to.be.a('array')
         expect(worlds.length).to.be.equal(100)
       } catch (err) {
@@ -275,7 +294,9 @@ describe('VRChat Library', () => {
     })
     it('should return the users own worlds or an empty array', async () => {
       try {
-        const worlds = await vrchat.world.getWorldsList(authToken, apiKey, 'any', undefined, undefined, undefined, true)
+        const worlds = await vrchat.world.getWorldsList(authToken, apiKey, 'any', {
+          user: 'me'
+        })
         expect(worlds).to.be.a('array')
         expect(worlds.length === 0 || worlds[0].authorId === testUserId).to.be.true
       } catch (err) {

@@ -1,11 +1,12 @@
 import fetch from 'node-fetch'
 import { AuthError, BadRequest, UnexpectedError } from './error-handling'
-import { WorldEndPoints } from './interfaces'
+import { WorldEndPoints, WorldOptions } from './interfaces'
 
 export class World {
   private readonly endpoints: WorldEndPoints;
   private readonly sortOptions: Set<string>;
   private readonly orderOptions: Set<string>;
+  private readonly releaseStatusOptions: Set<string>;
   constructor() {
     this.endpoints = {
       any: 'https://api.vrchat.cloud/api/1/worlds',
@@ -25,24 +26,41 @@ export class World {
       'ascending',
       'descending'
     ])
+    this.releaseStatusOptions = new Set([
+      'public',
+      'private',
+      'hidden'
+    ])
   }
 
   public async getWorldsList(
     token: string,
     apiKey: string,
     worldType: keyof WorldEndPoints = 'any',
-    maxResults: number = 10,
-    sortBy: string = 'popularity',
-    orderBy: string = 'ascending',
-    isOwn: boolean = false
+    config: WorldOptions = {}
   ): Promise<any> {
     try {
       if (!token || !apiKey) throw new TypeError('token, apiKey must be provided')
       let url: string = this.endpoints[worldType]
+      // Validate worldType
       if(!url) throw new Error('Please provide a valid world type')
-      if(!this.sortOptions.has(sortBy)) throw new Error('Please supply a valid sorting option')
-      if(!this.orderOptions.has(orderBy)) throw new Error('Please supply a valid ordering option')
-      url = `${url}?apiKey=${apiKey}&n=${maxResults}&sort=${sortBy}&order=${orderBy}${isOwn ? '&user=me' : ''}`
+      // Validate Sort Options, only if provided
+      if(config.sort) {
+        if (!this.sortOptions.has(config.sort)) throw new Error('Please supply a valid sorting option')
+      }
+      // Validate Order Options, only if provided
+      if (config.order) {
+        if (!this.orderOptions.has(config.order)) throw new Error('Please supply a valid sorting option')
+      }
+      // Validate releaseStatus Options, only if provided
+      if (config.releaseStatus) {
+        if (!this.releaseStatusOptions.has(config.releaseStatus)) throw new Error('Please supply a valid releaseStatus option')
+      }
+      url = `${url}?apiKey=${apiKey}`
+      // Format query parameters
+      for(const queryParam in config) {
+        url+= `&${queryParam}=${config[queryParam as keyof WorldOptions]}`
+      }
       const response: any = await fetch(url, {
         headers: {
           Authorization: `Basic ${token}`
