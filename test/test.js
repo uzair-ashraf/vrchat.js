@@ -138,9 +138,29 @@ describe('VRChat Library', () => {
         expect(err instanceof TypeError).to.be.true
       }
     })
+    it('should throw an error for invalid user type', async () => {
+      try {
+        await vrchat.user.getUsersList(authToken, apiKey, 'meow')
+      } catch (err) {
+        expect(err instanceof Error).to.be.true
+        expect(err.message).to.equal('Please provide a valid user type')
+      }
+    })
+    it('should throw an error for missing search property', async () => {
+      try {
+        await vrchat.user.getUsersList(authToken, apiKey, 'all', {
+          search: ''
+        })
+      } catch (err) {
+        expect(err instanceof Error).to.be.true
+        expect(err.message).to.equal('Please provide a valid search parameter')
+      }
+    })
     it('should return a list of 10 users', async () => {
       try {
-        const users = await vrchat.user.getUsersList(authToken, apiKey, 'shadow')
+        const users = await vrchat.user.getUsersList(authToken, apiKey, 'all', {
+          search: 'shadow'
+        })
         expect(users).to.be.an('array')
         expect(users.length).to.equal(10)
       } catch (err) {
@@ -149,7 +169,10 @@ describe('VRChat Library', () => {
     })
     it('should return a list of 100 users', async () => {
       try {
-        const users = await vrchat.user.getUsersList(authToken, apiKey, 'shadow', 100)
+        const users = await vrchat.user.getUsersList(authToken, apiKey, 'all', {
+          search: 'shadow',
+          n: 100
+        })
         expect(users).to.be.an('array')
         expect(users.length).to.equal(100)
       } catch (err) {

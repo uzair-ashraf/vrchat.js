@@ -4,6 +4,12 @@ exports.User = void 0;
 const node_fetch_1 = require("node-fetch");
 const error_handling_1 = require("./error-handling");
 class User {
+    constructor() {
+        this.userEndpoints = {
+            all: 'https://api.vrchat.cloud/api/1/users',
+            active: 'https://api.vrchat.cloud/api/1/users/active'
+        };
+    }
     async getInfo(token) {
         try {
             if (!token)
@@ -48,13 +54,24 @@ class User {
             return err;
         }
     }
-    async getUsersList(token, apiKey, username, maxResults = 10, activeOnly = false) {
+    async getUsersList(token, apiKey, userType = 'all', config = {
+        search: ''
+    }) {
         try {
-            if (!token || !apiKey || !username)
-                throw new TypeError('token, apiKey, and username must be provided');
-            const url = activeOnly
-                ? `https://api.vrchat.cloud/api/1/users/active?apiKey=${apiKey}&search=${username}&n=${maxResults}`
-                : `https://api.vrchat.cloud/api/1/users?apiKey=${apiKey}&search=${username}&n=${maxResults}`;
+            if (!token || !apiKey)
+                throw new TypeError('token and apiKey must be provided');
+            let url = this.userEndpoints[userType];
+            // Validate userType
+            if (!url)
+                throw new Error('Please provide a valid user type');
+            // Validate search Parameter
+            if (!config.search)
+                throw new Error('Please provide a valid search parameter');
+            url = `${url}?apiKey=${apiKey}`;
+            // Format query parameters
+            for (const queryParam in config) {
+                url += `&${queryParam}=${config[queryParam]}`;
+            }
             const response = await node_fetch_1.default(url, {
                 headers: {
                     Authorization: `Basic ${token}`
@@ -65,7 +82,7 @@ class User {
                 return data;
             }
             else {
-                throw new error_handling_1.AuthError(response.status, data);
+                throw new error_handling_1.UnexpectedError(response.status, data);
             }
         }
         catch (err) {

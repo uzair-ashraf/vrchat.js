@@ -1,7 +1,15 @@
 import fetch from 'node-fetch'
-import { AuthError, BadRequest } from './error-handling'
+import { AuthError, BadRequest, UnexpectedError } from './error-handling'
+import { UserEndpoints, UserOptions } from './interfaces'
 
 export class User {
+  private readonly userEndpoints: UserEndpoints;
+  constructor() {
+    this.userEndpoints = {
+      all: 'https://api.vrchat.cloud/api/1/users',
+      active: 'https://api.vrchat.cloud/api/1/users/active'
+    }
+  }
   public async getInfo(token: string): Promise<any> {
     try {
       if (!token) throw new TypeError('Token must be provided')
@@ -40,12 +48,26 @@ export class User {
       return err
     }
   }
-  public async getUsersList(token: string, apiKey: string, username: string, maxResults: number = 10, activeOnly: boolean = false): Promise<any> {
+  public async getUsersList(
+    token: string,
+    apiKey: string,
+    userType: keyof UserEndpoints = 'all',
+    config: UserOptions = {
+      search: ''
+    }
+  ): Promise<any> {
     try {
-      if (!token || !apiKey || !username) throw new TypeError('token, apiKey, and username must be provided')
-      const url: string = activeOnly
-        ? `https://api.vrchat.cloud/api/1/users/active?apiKey=${apiKey}&search=${username}&n=${maxResults}`
-        : `https://api.vrchat.cloud/api/1/users?apiKey=${apiKey}&search=${username}&n=${maxResults}`
+      if (!token || !apiKey) throw new TypeError('token and apiKey must be provided')
+      let url: string = this.userEndpoints[userType]
+      // Validate userType
+      if (!url) throw new Error('Please provide a valid user type')
+      // Validate search Parameter
+      if(!config.search) throw new Error('Please provide a valid search parameter')
+      url = `${url}?apiKey=${apiKey}`
+      // Format query parameters
+      for (const queryParam in config) {
+        url += `&${queryParam}=${config[queryParam as keyof UserOptions]}`
+      }
       const response: any = await fetch(url, {
         headers: {
           Authorization: `Basic ${token}`
@@ -55,7 +77,7 @@ export class User {
       if (response.status === 200) {
         return data
       } else {
-        throw new AuthError(response.status, data)
+        throw new UnexpectedError(response.status, data)
       }
     } catch (err) {
       console.error(err)

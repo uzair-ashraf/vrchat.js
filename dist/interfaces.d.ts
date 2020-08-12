@@ -15,3 +15,12 @@ export interface WorldOptions {
     search?: string;
     releaseStatus?: string;
 }
+export interface UserEndpoints {
+    readonly all: string;
+    readonly active: string;
+}
+export interface UserOptions {
+    search: string;
+    n?: number;
+    offset?: number;
+}
